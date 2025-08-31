@@ -26,6 +26,7 @@ yarn-error.log*
 
 # env files
 .env.local
+.gemini/.env
 
 # vercel
 .vercel
