@@ -1,12 +1,52 @@
-import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { Infer, v } from "convex/values";
+import { mutation, query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
-export const store = mutation({
+export const getUserReturn = v.object({
+  _id: v.id("users"),
+  workosId: v.string(),
+  name: v.string(),
+  email: v.string(),
+  pfpUrl: v.string(),
+});
+export type GetUserReturn = Infer<typeof getUserReturn>;
+
+export const get = query({
   args: {},
+  returns: getUserReturn,
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Called storeUser without authentication present");
+      throw new Error("Called getUser without authentication present.");
+    }
+
+    const workosId: string = String(identity.id);
+    const name: string = String(identity.name);
+    const email: string = String(identity.email);
+    const pfpUrl: string = String(identity.profile_picture_url);
+
+    // Check if we've already stored this identity before.
+    const user: Doc<"users"> | null = await ctx.db
+      .query("users")
+      .withIndex("by_workosId", (q) =>
+        q.eq("workosId", workosId)
+      )
+      .unique();
+
+    if (!user) {
+      throw new Error("User not stored.");
+    }
+    return {_id: user._id, workosId, name, email, pfpUrl};
+  },
+});
+
+export const store = mutation({
+  args: {},
+  returns: v.id("users"),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present.");
     }
 
     const workosId: string = String(identity.id);
@@ -18,7 +58,7 @@ export const store = mutation({
     const pfpUrl: string = String(identity.profile_picture_url);
 
     // Check if we've already stored this identity before.
-    const user = await ctx.db
+    const user: Doc<"users"> | null = await ctx.db
       .query("users")
       .withIndex("by_workosId", (q) =>
         q.eq("workosId", workosId)

@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { StoreUser } from "@/components/StoreUser";
 import { AuthButtons } from "@/components/AuthButtons";
-import { cn } from "@/lib/utils";
-import { ChatBubbleIcon, ReaderIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
-import { ReactNode } from "react";
+import { UserMenu } from "@/components/UserMenu";
+import { ThemeIndicator } from "@/components/ThemeIndicator";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chat App",
-  description: "Start chatting immediately",
+  title: "AI Chat App",
+  description: "Your private conversation space with an AI assistant",
   icons: {
     icon: "/convex.svg",
   },
@@ -34,68 +32,52 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // `suppressHydrationWarning` only affects the html tag,
-    // and is needed by `ThemeProvider` which sets the theme
-    // class attribute on it
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('ai-chat-theme') === 'dark' || 
+                    (!localStorage.getItem('ai-chat-theme') && 
+                     window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <ThemeProvider attribute="class">
+        <ThemeProvider>
           <ConvexClientProvider>
             <StoreUser />
-            <div className="flex min-h-screen w-full">
-              <ProductMenu />
-              <div className="flex w-full flex-col">
-                <header className="sticky top-0 z-10 flex h-20 items-center justify-end border-b bg-background/80 px-4 backdrop-blur md:px-6">
+            <div className="flex min-h-screen w-full flex-col">
+              <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur md:px-6">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-cyan-600 flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">AI</span>
+                  </div>
+                  <h1 className="text-lg font-semibold">AI Chat</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ThemeIndicator />
+                  <UserMenu />
                   <AuthButtons />
-                </header>
+                </div>
+              </header>
+              <main className="flex-1">
                 {children}
-              </div>
+              </main>
             </div>
           </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>
-  );
-}
-
-function ProductMenu() {
-  return (
-    <aside className="w-48 border-r bg-muted/40 p-2">
-      <nav className="flex h-full max-h-screen flex-col gap-2">
-        <MenuLink href="/" active>
-          <ChatBubbleIcon className="h-4 w-4" />
-          Chat
-        </MenuLink>
-
-        <MenuLink href="https://docs.convex.dev">
-          <ReaderIcon className="h-4 w-4" />
-          Docs
-        </MenuLink>
-      </nav>
-    </aside>
-  );
-}
-
-function MenuLink({
-  active,
-  href,
-  children,
-}: {
-  active?: boolean;
-  href: string;
-  children: ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium  text-muted-foreground transition-all hover:text-primary",
-        active && "bg-muted text-primary",
-      )}
-    >
-      {children}
-    </Link>
   );
 }
