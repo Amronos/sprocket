@@ -1,28 +1,29 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import { StoreUser } from "@/components/StoreUser";
-import { AuthButtons } from "@/components/AuthButtons";
-import { UserMenu } from "@/components/UserMenu";
-import { ThemeIndicator } from "@/components/ThemeIndicator";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import "./globals.css";
+import './globals.css';
+
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+
+import { ConvexClientProvider } from '@/components/ConvexClientProvider';
+import { StoreUser } from '@/components/StoreUser';
+import { ThemeIndicator } from '@/components/ThemeIndicator';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { UserMenu } from '@/components/UserMenu';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "AI Chat App",
-  description: "Your private conversation space with an AI assistant",
+  title: 'Sprocket',
+  description: 'AI app designed for robotics development',
   icons: {
-    icon: "/convex.svg",
+    icon: '/convex.svg',
   },
 };
 
@@ -38,8 +39,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (localStorage.getItem('ai-chat-theme') === 'dark' || 
-                    (!localStorage.getItem('ai-chat-theme') && 
+                if (localStorage.getItem('sprocket-theme') === 'dark' ||
+                    (!localStorage.getItem('sprocket-theme') &&
                      window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.documentElement.classList.add('dark');
                 } else {
@@ -63,17 +64,14 @@ export default function RootLayout({
                   <div className="h-8 w-8 rounded-lg bg-cyan-600 flex items-center justify-center">
                     <span className="text-white font-bold text-sm">AI</span>
                   </div>
-                  <h1 className="text-lg font-semibold">AI Chat</h1>
+                  <h1 className="text-lg font-semibold">Sprocket</h1>
                 </div>
                 <div className="flex items-center gap-2">
                   <ThemeIndicator />
                   <UserMenu />
-                  <AuthButtons />
                 </div>
               </header>
-              <main className="flex-1">
-                {children}
-              </main>
+              <main className="flex-1">{children}</main>
             </div>
           </ConvexClientProvider>
         </ThemeProvider>

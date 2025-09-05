@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ReactNode, useEffect, useState } from "react";
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -16,11 +16,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   // Prevent hydration mismatch by not rendering theme-dependent content until mounted
   if (!mounted) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-gray-900">
-        {children}
-      </div>
-    );
+    return <div className="min-h-screen bg-white dark:bg-gray-900">{children}</div>;
   }
 
   return (
@@ -29,10 +25,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
-      storageKey="ai-chat-theme"
+      storageKey="sprocket-theme"
       enableColorScheme
     >
       {children}
     </NextThemesProvider>
   );
-} 
+}

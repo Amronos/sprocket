@@ -1,9 +1,10 @@
-import { Infer, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
+import { Infer, v } from 'convex/values';
+
+import { Doc } from './_generated/dataModel';
+import { mutation, query } from './_generated/server';
 
 export const getUserReturn = v.object({
-  _id: v.id("users"),
+  _id: v.id('users'),
   workosId: v.string(),
   name: v.string(),
   email: v.string(),
@@ -17,7 +18,7 @@ export const get = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Called getUser without authentication present.");
+      throw new Error('Called getUser without authentication present.');
     }
 
     const workosId: string = String(identity.id);
@@ -26,27 +27,25 @@ export const get = query({
     const pfpUrl: string = String(identity.profile_picture_url);
 
     // Check if we've already stored this identity before.
-    const user: Doc<"users"> | null = await ctx.db
-      .query("users")
-      .withIndex("by_workosId", (q) =>
-        q.eq("workosId", workosId)
-      )
+    const user: Doc<'users'> | null = await ctx.db
+      .query('users')
+      .withIndex('by_workosId', (q) => q.eq('workosId', workosId))
       .unique();
 
     if (!user) {
-      throw new Error("User not stored.");
+      throw new Error('User not stored.');
     }
-    return {_id: user._id, workosId, name, email, pfpUrl};
+    return { _id: user._id, workosId, name, email, pfpUrl };
   },
 });
 
 export const store = mutation({
   args: {},
-  returns: v.id("users"),
+  returns: v.id('users'),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Called storeUser without authentication present.");
+      throw new Error('Called storeUser without authentication present.');
     }
 
     const workosId: string = String(identity.id);
@@ -58,11 +57,9 @@ export const store = mutation({
     const pfpUrl: string = String(identity.profile_picture_url);
 
     // Check if we've already stored this identity before.
-    const user: Doc<"users"> | null = await ctx.db
-      .query("users")
-      .withIndex("by_workosId", (q) =>
-        q.eq("workosId", workosId)
-      )
+    const user: Doc<'users'> | null = await ctx.db
+      .query('users')
+      .withIndex('by_workosId', (q) => q.eq('workosId', workosId))
       .unique();
 
     if (user !== null) {
@@ -88,14 +85,14 @@ export const store = mutation({
       return user._id;
     }
     // If it's a new identity, create a new user.
-    return await ctx.db.insert("users", {
+    return await ctx.db.insert('users', {
       workosId,
       name,
       firstName,
       lastName,
       email,
       emailVerified,
-      pfpUrl
+      pfpUrl,
     });
   },
 });

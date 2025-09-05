@@ -32,7 +32,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
-  
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -65,20 +65,20 @@
   * {
     @apply border-border;
   }
-  
+
   html {
     @apply bg-background text-foreground;
   }
-  
+
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Prevent theme flashing during hydration */
   html.dark {
     color-scheme: dark;
   }
-  
+
   html:not(.dark) {
     color-scheme: light;
   }
@@ -89,30 +89,30 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   /* Custom scrollbar styling */
   ::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
-  
+
   ::-webkit-scrollbar-thumb {
     @apply bg-muted-foreground/20 rounded-full;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground/30;
   }
-  
+
   /* Message animation */
   .message-enter {
     animation: messageSlideIn 0.3s ease-out forwards;
     will-change: opacity, transform;
   }
-  
+
   @keyframes messageSlideIn {
     from {
       opacity: 0;
@@ -123,12 +123,12 @@
       transform: translateY(0);
     }
   }
-  
+
   /* Cyan accent text */
   .cyan-text {
     @apply text-cyan-600 dark:text-cyan-400;
   }
-  
+
   /* Glass morphism effect */
   .glass {
     @apply bg-background/80 backdrop-blur-md border border-border/50;

@@ -1,7 +1,13 @@
-"use client";
+'use client';
 
-import { useConvexAuth } from "convex/react";
-import { Button } from "@/components/ui/button";
+import { DesktopIcon, ExitIcon, MoonIcon, PersonIcon, SunIcon } from '@radix-ui/react-icons';
+import { useAuth } from '@workos-inc/authkit-nextjs/components';
+import { Authenticated, Unauthenticated } from 'convex/react';
+import Link from 'next/link';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,17 +15,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { PersonIcon, ExitIcon, SunIcon, MoonIcon, DesktopIcon } from "@radix-ui/react-icons";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useAuth } from "@workos-inc/authkit-nextjs/components";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+} from '@/components/ui/dropdown-menu';
+
+import { GetUser } from './GetUser';
+import { Button as AuthButton } from './ui/button';
 
 export function UserMenu() {
   const [mounted, setMounted] = useState(false);
-  const { isAuthenticated } = useConvexAuth();
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -28,35 +30,29 @@ export function UserMenu() {
 
   // Show a placeholder until mounted to prevent hydration mismatch
   if (!mounted) {
-    return (
-      <div className="h-9 w-20 rounded-md bg-gray-100 dark:bg-gray-800" />
-    );
+    return <div className="h-9 w-20 rounded-md bg-gray-100 dark:bg-gray-800" />;
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  return <AuthenticatedUserMenu />;
+  return (
+    <div>
+      <Authenticated>
+        <AuthenticatedUserMenu />
+      </Authenticated>
+      <Unauthenticated>
+        <AuthButtons />
+      </Unauthenticated>
+    </div>
+  );
 }
 
 function AuthenticatedUserMenu() {
-  const user = useQuery(api.users.get);
+  const user = GetUser();
   const { signOut } = useAuth();
   const { setTheme } = useTheme();
 
   if (!user) {
     return null;
   }
-
-  const handleThemeChange = (newTheme: string) => {
-    try {
-      setTheme(newTheme);
-      console.log('Theme changed to:', newTheme);
-    } catch (error) {
-      console.error('Failed to change theme:', error);
-    }
-  };
 
   return (
     <DropdownMenu>
@@ -76,24 +72,15 @@ function AuthenticatedUserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => handleThemeChange("light")}
-          className="flex items-center gap-2"
-        >
+        <DropdownMenuItem onClick={() => setTheme('light')} className="flex items-center gap-2">
           <SunIcon className="h-4 w-4" />
           Light mode
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleThemeChange("dark")}
-          className="flex items-center gap-2"
-        >
+        <DropdownMenuItem onClick={() => setTheme('dark')} className="flex items-center gap-2">
           <MoonIcon className="h-4 w-4" />
           Dark mode
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleThemeChange("system")}
-          className="flex items-center gap-2"
-        >
+        <DropdownMenuItem onClick={() => setTheme('system')} className="flex items-center gap-2">
           <DesktopIcon className="h-4 w-4" />
           System
         </DropdownMenuItem>
@@ -107,5 +94,18 @@ function AuthenticatedUserMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function AuthButtons() {
+  return (
+    <div className="flex gap-2">
+      <Link href="/sign-in">
+        <AuthButton variant="ghost">Sign In</AuthButton>
+      </Link>
+      <Link href="/sign-up">
+        <AuthButton>Sign Up</AuthButton>
+      </Link>
+    </div>
   );
 }

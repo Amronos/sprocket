@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { SunIcon, MoonIcon, DesktopIcon } from "@radix-ui/react-icons";
+import { DesktopIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export function ThemeIndicator() {
   const { theme, resolvedTheme, systemTheme } = useTheme();
@@ -14,9 +14,7 @@ export function ThemeIndicator() {
 
   // Show a placeholder until mounted to prevent hydration mismatch
   if (!mounted) {
-    return (
-      <div className="h-6 w-6 px-3 py-1 rounded-md bg-gray-100 dark:bg-gray-800" />
-    );
+    return <div className="h-6 w-6 px-3 py-1 rounded-md bg-gray-100 dark:bg-gray-800" />;
   }
 
   const currentTheme = resolvedTheme || theme;
@@ -50,4 +48,4 @@ export function ThemeIndicator() {
       <span className="hidden sm:inline-block">{getThemeText()}</span>
     </div>
   );
-} 
+}

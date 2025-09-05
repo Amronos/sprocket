@@ -1,5 +1,5 @@
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineSchema, defineTable } from 'convex/server';
+import { v } from 'convex/values';
 
 export default defineSchema({
   users: defineTable({
@@ -10,11 +10,5 @@ export default defineSchema({
     email: v.string(),
     emailVerified: v.boolean(),
     pfpUrl: v.string(),
-  }).index("by_workosId", ["workosId"]),
-
-  messages: defineTable({
-    author: v.id("users"),
-    body: v.string(),
-    isUserMessage: v.boolean(),
-  }).index("by_author", ["author"]),
+  }).index('by_workosId', ['workosId']),
 });

@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { useConvexAuth } from "convex/react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useEffect } from "react";
+import { useConvexAuth } from 'convex/react';
+import { useMutation } from 'convex/react';
+import { useEffect } from 'react';
+
+import { api } from '@/convex/_generated/api';
 
 export function StoreUser() {
   const { isAuthenticated } = useConvexAuth();
