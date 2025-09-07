@@ -6,14 +6,16 @@ import { Authenticated, Unauthenticated, useMutation, useQuery } from 'convex/re
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
 import { Message } from '@/app/product/Chat/Message';
+import { Sidebar } from '@/app/product/Chat/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/convex/_generated/api';
 import { GetUserReturn } from '@/convex/users';
+import { useThread } from '@/lib/useThread';
 
 export function Chat() {
   return (
-    <div>
+    <div className="flex h-full">
       <Authenticated>
         <AuthenticatedChat />
       </Authenticated>
@@ -27,14 +29,20 @@ export function Chat() {
 function AuthenticatedChat() {
   const [newMessageText, setNewMessageText] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
-  const [threadId, setThreadId] = useState<string>('');
+  const { threadId, setThreadId } = useThread();
 
   const user: GetUserReturn | undefined = useQuery(api.users.get);
+  const latestThread = useQuery(api.threads.getLatestThread, user ? { userId: user._id } : 'skip');
   const createThread = useMutation(api.threads.createNewThread);
   const sendMessage = useMutation(api.threads.initiateAsyncStreaming).withOptimisticUpdate(
     optimisticallySendMessage(api.threads.listThreadMessages),
   );
-  const threads = useQuery(api.threads.listThreads, user ? { userId: user._id } : 'skip');
+
+  useEffect(() => {
+    if (latestThread) {
+      setThreadId(latestThread._id);
+    }
+  }, [latestThread, setThreadId]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,14 +50,11 @@ function AuthenticatedChat() {
 
     setIsSending(true);
     try {
-      // Get all threads of the user, if there are none, create one
       let id = threadId;
-      if (!threads || threads.page.length === 0) {
+      if (!id) {
         id = await createThread({ userId: user._id });
-      } else {
-        id = threads.page[0]._id;
+        setThreadId(id);
       }
-      setThreadId(id);
 
       await sendMessage({ threadId: id, prompt: newMessageText });
       setNewMessageText('');
@@ -61,49 +66,48 @@ function AuthenticatedChat() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
-        {threadId && threadId !== '' ? (
-          <Messages threadId={threadId} user={user} />
-        ) : (
-          <NoMessaages user={user} />
-        )}
-      </div>
+    <>
+      <Sidebar />
+      <div className="flex flex-col h-full bg-background flex-1">
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto">
+          {threadId ? <Messages threadId={threadId} user={user} /> : <NoMessaages user={user} />}
+        </div>
 
-      {/* Input Area */}
-      <div className="border-t bg-background p-6">
-        <form onSubmit={handleSubmit} className="flex gap-3">
-          <Input
-            value={newMessageText}
-            onChange={(event) => setNewMessageText(event.target.value)}
-            placeholder="Type your message..."
-            className="flex-1"
-            disabled={isSending}
-            maxLength={1000}
-          />
-          <Button
-            type="submit"
-            disabled={!newMessageText.trim() || isSending}
-            size="icon"
-            className="shrink-0"
-          >
-            <ArrowRightIcon className="h-4 w-4" />
-          </Button>
-        </form>
-        {newMessageText.length > 800 && (
-          <div className="mt-2 text-xs text-muted-foreground text-right">
-            {newMessageText.length}/1000 characters
-          </div>
-        )}
+        {/* Input Area */}
+        <div className="border-t bg-background p-6">
+          <form onSubmit={handleSubmit} className="flex gap-3">
+            <Input
+              value={newMessageText}
+              onChange={(event) => setNewMessageText(event.target.value)}
+              placeholder="Type your message..."
+              className="flex-1"
+              disabled={isSending}
+              maxLength={1000}
+            />
+            <Button
+              type="submit"
+              disabled={!newMessageText.trim() || isSending}
+              size="icon"
+              className="shrink-0"
+            >
+              <ArrowRightIcon className="h-4 w-4" />
+            </Button>
+          </form>
+          {newMessageText.length > 800 && (
+            <div className="mt-2 text-xs text-muted-foreground text-right">
+              {newMessageText.length}/1000 characters
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function UnauthenticatedChat() {
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center h-full w-full">
       <div className="text-center space-y-4">
         <div className="h-16 w-16 mx-auto rounded-full bg-cyan-600 flex items-center justify-center">
           <ChatBubbleIcon className="h-8 w-8 text-white" />
@@ -118,7 +122,6 @@ function UnauthenticatedChat() {
 }
 
 function Messages({ threadId, user }: { threadId: string; user: GetUserReturn | undefined }) {
-  console.log('Called messages with threadId: ' + threadId);
   const { results: messages } = useUIMessages(
     api.threads.listThreadMessages,
     { threadId },

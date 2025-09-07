@@ -1,52 +1,26 @@
-import { ChatBubbleIcon, PersonIcon } from '@radix-ui/react-icons';
-import { ReactNode } from 'react';
+'use client';
 
+import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-export function Message({
-  author,
-  isUserMessage,
-  children,
-}: {
+type MessageProps = {
   author: string;
   isUserMessage: boolean;
-  children: ReactNode;
-}) {
+  children: React.ReactNode;
+};
+
+export function Message({ author, isUserMessage, children }: MessageProps) {
   return (
-    <div className={cn('flex gap-3', isUserMessage ? 'flex-row-reverse' : 'flex-row')}>
-      {/* Avatar */}
-      <div
-        className={cn(
-          'flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium',
-          isUserMessage ? 'bg-cyan-600' : 'bg-gray-600',
-        )}
-      >
-        {isUserMessage ? (
-          <PersonIcon className="h-4 w-4" />
-        ) : (
-          <ChatBubbleIcon className="h-4 w-4" />
-        )}
-      </div>
-
-      {/* Message Content */}
-      <div
-        className={cn(
-          'flex flex-col gap-1 max-w-[80%]',
-          isUserMessage ? 'items-end' : 'items-start',
-        )}
-      >
-        {/* Author Name */}
-        <div className="text-xs font-medium text-muted-foreground">{author}</div>
-
-        {/* Message Bubble */}
-        <div
-          className={cn(
-            'rounded-2xl px-4 py-3 text-sm leading-relaxed',
-            isUserMessage ? 'bg-cyan-600 text-white' : 'bg-muted text-foreground',
-          )}
-        >
-          {children}
-        </div>
+    <div className={cn('flex items-start gap-3', isUserMessage ? 'justify-end' : 'justify-start')}>
+      <div className={cn('max-w-[75%]', isUserMessage ? 'order-1' : '')}>
+        <p className={cn('text-sm font-semibold mb-1', isUserMessage ? 'text-right' : 'text-left')}>
+          {author}
+        </p>
+        <Card className={cn(isUserMessage ? 'bg-primary text-primary-foreground' : '')}>
+          <CardContent className="p-3">
+            <div className="prose prose-sm max-w-none text-inherit">{children}</div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

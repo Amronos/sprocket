@@ -1,3 +1,10 @@
+## 5th to 6th September 2025
+
+There is a sidebar now, through which you can switch between conversations/projects and create new ones.<br>
+I also added automatic title generation for the conversations.
+
+![assets/journal/06-09-2025_1.png](assets/journal/06-09-2025_1.png)
+
 ## 2nd to 4th September 2025
 
 I implemented actual AI functionality into the app, the user can now chat with an AI like any other AI chat app.<br>
