@@ -15,13 +15,12 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-export default [
-  // Ignore .gitignore patterns
+const eslintConfig = [
+  {
+    ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
+  },
   includeIgnoreFile(gitignorePath, 'Imported .gitignore patterns'),
-
-  // Next.js + TypeScript defaults
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
-
   {
     plugins: {
       prettier: prettierPlugin,
@@ -44,3 +43,5 @@ export default [
     },
   },
 ];
+
+export default eslintConfig;

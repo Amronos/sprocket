@@ -1,10 +1,10 @@
 'use client';
 
-import { DesktopIcon, ExitIcon, MoonIcon, PersonIcon, SunIcon } from '@radix-ui/react-icons';
+import { ExitIcon } from '@radix-ui/react-icons';
 import { useAuth } from '@workos-inc/authkit-nextjs/components';
-import { Authenticated, Unauthenticated } from 'convex/react';
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,9 @@ export function UserMenu() {
       <Unauthenticated>
         <AuthButtons />
       </Unauthenticated>
+      <AuthLoading>
+        <AuthButtons />
+      </AuthLoading>
     </div>
   );
 }
@@ -48,7 +51,6 @@ export function UserMenu() {
 function AuthenticatedUserMenu() {
   const user = GetUser();
   const { signOut } = useAuth();
-  const { setTheme } = useTheme();
 
   if (!user) {
     return null;
@@ -57,33 +59,23 @@ function AuthenticatedUserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2 px-3">
-          <div className="h-6 w-6 rounded-full bg-cyan-600 flex items-center justify-center">
-            <PersonIcon className="h-3 w-3 text-white" />
-          </div>
-          <span className="hidden sm:inline-block font-medium">{user.name}</span>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <Image
+            src={user.pfpUrl}
+            alt={user.name.charAt(0)}
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-full bg-cyan-800 flex items-center justify-center"
+          />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col gap-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setTheme('light')} className="flex items-center gap-2">
-          <SunIcon className="h-4 w-4" />
-          Light mode
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')} className="flex items-center gap-2">
-          <MoonIcon className="h-4 w-4" />
-          Dark mode
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')} className="flex items-center gap-2">
-          <DesktopIcon className="h-4 w-4" />
-          System
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => signOut()}

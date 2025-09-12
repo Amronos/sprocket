@@ -1,3 +1,10 @@
+## 7th to 10th September 2025
+
+I made many improvements to the UI alongside fixing various issues with it.<br>
+I fixed the unauthenticated UI not working, added support for multi-line messages, allowed the sidebar to be opened and closed and made various improvements to the UI's looks.
+
+![assets/journal/10-09-2025_1.png](assets/journal/10-09-2025_1.png)
+
 ## 5th to 6th September 2025
 
 There is a sidebar now, through which you can switch between conversations/projects and create new ones.<br>

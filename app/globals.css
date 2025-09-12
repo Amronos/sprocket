@@ -62,15 +62,7 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   html {
-    @apply bg-background text-foreground;
-  }
-
-  body {
     @apply bg-background text-foreground;
   }
 
@@ -122,15 +114,5 @@
       opacity: 1;
       transform: translateY(0);
     }
-  }
-
-  /* Cyan accent text */
-  .cyan-text {
-    @apply text-cyan-600 dark:text-cyan-400;
-  }
-
-  /* Glass morphism effect */
-  .glass {
-    @apply bg-background/80 backdrop-blur-md border border-border/50;
   }
 }

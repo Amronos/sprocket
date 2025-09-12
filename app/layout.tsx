@@ -5,8 +5,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import { ConvexClientProvider } from '@/components/ConvexClientProvider';
 import { StoreUser } from '@/components/StoreUser';
-import { ThemeIndicator } from '@/components/ThemeIndicator';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/UserMenu';
 
 const geistSans = Geist({
@@ -58,21 +58,13 @@ export default function RootLayout({
         <ThemeProvider>
           <ConvexClientProvider>
             <StoreUser />
-            <div className="flex min-h-screen w-full flex-col">
-              <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur md:px-6">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-cyan-600 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">AI</span>
-                  </div>
-                  <h1 className="text-lg font-semibold">Sprocket</h1>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ThemeIndicator />
-                  <UserMenu />
-                </div>
+            <>
+              <header className="fixed top-0 flex h-16 w-full shrink items-center justify-end gap-2 px-4">
+                <ThemeToggle />
+                <UserMenu />
               </header>
-              <main className="flex-1">{children}</main>
-            </div>
+              <main>{children}</main>
+            </>
           </ConvexClientProvider>
         </ThemeProvider>
       </body>

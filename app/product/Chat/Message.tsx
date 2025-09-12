@@ -12,13 +12,19 @@ type MessageProps = {
 export function Message({ author, isUserMessage, children }: MessageProps) {
   return (
     <div className={cn('flex items-start gap-3', isUserMessage ? 'justify-end' : 'justify-start')}>
-      <div className={cn('max-w-[75%]', isUserMessage ? 'order-1' : '')}>
+      <div>
         <p className={cn('text-sm font-semibold mb-1', isUserMessage ? 'text-right' : 'text-left')}>
           {author}
         </p>
-        <Card className={cn(isUserMessage ? 'bg-primary text-primary-foreground' : '')}>
+        <Card
+          className={cn(
+            isUserMessage ? 'bg-primary text-primary-foreground' : 'bg-slate-100 dark:bg-slate-800',
+          )}
+        >
           <CardContent className="p-3">
-            <div className="prose prose-sm max-w-none text-inherit">{children}</div>
+            <div className="max-w-prose text-inherit whitespace-pre-wrap break-words">
+              {children}
+            </div>
           </CardContent>
         </Card>
       </div>

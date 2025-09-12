@@ -41,10 +41,10 @@ repos:
       - id: prettier
         args: [--write]
 
-  # Run ESLint via next lint
+  # Run npm lint
   - repo: local
     hooks:
-      - id: eslint
-        name: eslint
-        entry: npx next lint --fix
+      - id: lint
+        name: lint
+        entry: npm run lint:pre-commit
         language: system

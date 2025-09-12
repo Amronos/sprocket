@@ -16,5 +16,6 @@ export function GetUser() {
     id: user.id,
     name: firstName + ' ' + lastName,
     email: user.email ?? '',
+    pfpUrl: user.profilePictureUrl ?? '',
   };
 }
