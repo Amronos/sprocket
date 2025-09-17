@@ -1,7 +1,7 @@
 import { Infer, v } from 'convex/values';
 
 import { Doc } from './_generated/dataModel';
-import { mutation, query } from './_generated/server';
+import { internalQuery, mutation } from './_generated/server';
 
 export const getUserReturn = v.object({
   _id: v.id('users'),
@@ -12,13 +12,13 @@ export const getUserReturn = v.object({
 });
 export type GetUserReturn = Infer<typeof getUserReturn>;
 
-export const get = query({
+export const get = internalQuery({
   args: {},
   returns: getUserReturn,
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error('Called getUser without authentication present.');
+      throw new Error('Called internal.users.get without authentication present.');
     }
 
     const workosId: string = String(identity.id);

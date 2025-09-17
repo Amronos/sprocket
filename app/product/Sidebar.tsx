@@ -5,22 +5,18 @@ import { useMutation, useQuery } from 'convex/react';
 
 import { Button } from '@/components/ui/button';
 import { api } from '@/convex/_generated/api';
-import { GetUserReturn } from '@/convex/users';
 import { useThread } from '@/lib/useThread';
 import { cn } from '@/lib/utils';
 
 export function Sidebar({ isOpen }: { isOpen: boolean }) {
   const { threadId, setThreadId } = useThread();
-  const user: GetUserReturn | undefined = useQuery(api.users.get);
-  const threads = useQuery(api.threads.listThreads, user ? { userId: user._id } : 'skip');
+  const threads = useQuery(api.threads.listThreads);
   const createThread = useMutation(api.threads.createNewThread);
 
   const handleCreateThread = async () => {
     console.log('Creating New User Thread');
-    if (user) {
-      const newThreadId = await createThread({ userId: user._id });
-      setThreadId(newThreadId);
-    }
+    const newThreadId = await createThread();
+    setThreadId(newThreadId);
   };
 
   return (

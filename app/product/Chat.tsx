@@ -2,16 +2,22 @@
 
 import { optimisticallySendMessage, useUIMessages } from '@convex-dev/agent/react';
 import { ArrowUpIcon, ChatBubbleIcon } from '@radix-ui/react-icons';
-import { Authenticated, AuthLoading, Unauthenticated, useMutation, useQuery } from 'convex/react';
+import {
+  Authenticated,
+  AuthLoading,
+  Unauthenticated,
+  useAction,
+  useMutation,
+  useQuery,
+} from 'convex/react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
-import { Message } from '@/app/product/Chat/Message';
-import { Sidebar } from '@/app/product/Chat/Sidebar';
+import { Sidebar } from '@/app/product/Sidebar';
+import { Message } from '@/components/Message';
 import { Button } from '@/components/ui/button';
 import { InputBox } from '@/components/ui/input-box';
 import { api } from '@/convex/_generated/api';
-import { GetUserReturn } from '@/convex/users';
 import { useThread } from '@/lib/useThread';
 import { cn } from '@/lib/utils';
 
@@ -37,12 +43,12 @@ function AuthenticatedChat() {
   const { threadId, setThreadId } = useThread();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const user: GetUserReturn | undefined = useQuery(api.users.get);
-  const latestThread = useQuery(api.threads.getLatestThread, user ? { userId: user._id } : 'skip');
+  const latestThread = useQuery(api.threads.getLatestThread);
   const createThread = useMutation(api.threads.createNewThread);
   const sendMessage = useMutation(api.threads.initiateAsyncStreaming).withOptimisticUpdate(
     optimisticallySendMessage(api.threads.listThreadMessages),
   );
+  const updateThreadTitle = useAction(api.threads.updateThreadTitle);
 
   useEffect(() => {
     if (latestThread) {
@@ -51,17 +57,18 @@ function AuthenticatedChat() {
   }, [latestThread, setThreadId]);
 
   const handleSubmit = async () => {
-    if (!newMessageText.trim() || isSending || !user) return;
+    if (!newMessageText.trim() || isSending) return;
 
     setIsSending(true);
     let id = threadId;
     if (!id) {
-      id = await createThread({ userId: user._id });
+      id = await createThread();
       setThreadId(id);
     }
 
     await sendMessage({ threadId: id, prompt: newMessageText });
     setNewMessageText('');
+    await updateThreadTitle({ threadId: id, checkTitle: true });
     setIsSending(false);
   };
 

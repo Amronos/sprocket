@@ -7,7 +7,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { GetUser } from '@/components/GetUser';
 import { Button } from '@/components/ui/button';
+import { Button as AuthButton } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-import { GetUser } from './GetUser';
-import { Button as AuthButton } from './ui/button';
+import { GetUserReturn } from '@/convex/users';
 
 export function UserMenu() {
   const [mounted, setMounted] = useState(false);
@@ -49,12 +49,8 @@ export function UserMenu() {
 }
 
 function AuthenticatedUserMenu() {
-  const user = GetUser();
+  const user: GetUserReturn = GetUser();
   const { signOut } = useAuth();
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <DropdownMenu>

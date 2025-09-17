@@ -3,11 +3,11 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { UserMenu } from '@/app/product/UserMenu';
 import { ConvexClientProvider } from '@/components/ConvexClientProvider';
 import { StoreUser } from '@/components/StoreUser';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { UserMenu } from '@/components/UserMenu';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

@@ -1,3 +1,9 @@
+## 17th September 2025
+
+I cleaned up the code a bit, aligned it with convex's best practices, made it more type-safe, etc.
+During this I fully redid my code for the thread title generation and made it a lot simpler.
+I also fixed a bug with the user ID being passed from the client (you can not trust it).
+
 ## 7th to 10th September 2025
 
 I made many improvements to the UI alongside fixing various issues with it.<br>

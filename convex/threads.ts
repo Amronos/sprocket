@@ -1,24 +1,56 @@
-import { createThread, listMessages, syncStreams, vStreamArgs } from '@convex-dev/agent';
+import {
+  createThread,
+  getThreadMetadata,
+  listMessages,
+  syncStreams,
+  vStreamArgs,
+} from '@convex-dev/agent';
 import { toUIMessages } from '@convex-dev/agent/react';
 import { paginationOptsValidator } from 'convex/server';
 import { v } from 'convex/values';
+import { z } from 'zod/v3';
 
-import { api, components, internal } from './_generated/api';
-import { internalAction, internalMutation, mutation, query } from './_generated/server';
+import { components, internal } from './_generated/api';
+import {
+  action,
+  ActionCtx,
+  internalAction,
+  mutation,
+  MutationCtx,
+  query,
+  QueryCtx,
+} from './_generated/server';
 import { agent } from './agents';
+import { getAuthUserId } from './utils';
+
+export async function authorizeThreadAccess(
+  ctx: ActionCtx | MutationCtx | QueryCtx,
+  threadId: string,
+) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
+    throw new Error('Unauthorized: user is required');
+  }
+  const { userId: threadUserId } = await getThreadMetadata(ctx, components.agent, { threadId });
+  if (threadUserId !== userId) {
+    throw new Error('Unauthorized: user does not match thread user');
+  }
+}
 
 export const createNewThread = mutation({
-  args: { userId: v.id('users') },
+  args: {},
   returns: v.string(),
-  handler: async (ctx, { userId }) => {
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
     const threadId = await createThread(ctx, components.agent, { userId });
     return threadId;
   },
 });
 
 export const listThreads = query({
-  args: { userId: v.id('users') },
-  handler: async (ctx, { userId }) => {
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
     return await ctx.runQuery(components.agent.threads.listThreadsByUserId, {
       userId,
       order: 'asc',
@@ -28,8 +60,9 @@ export const listThreads = query({
 });
 
 export const getLatestThread = query({
-  args: { userId: v.id('users') },
-  handler: async (ctx, { userId }) => {
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
     const threads = await ctx.runQuery(components.agent.threads.listThreadsByUserId, {
       userId,
       order: 'desc',
@@ -45,6 +78,7 @@ export const getLatestThread = query({
 export const initiateAsyncStreaming = mutation({
   args: { prompt: v.string(), threadId: v.string() },
   handler: async (ctx, { prompt, threadId }) => {
+    await authorizeThreadAccess(ctx, threadId);
     const { messageId } = await agent.saveMessage(ctx, {
       threadId,
       prompt,
@@ -56,11 +90,6 @@ export const initiateAsyncStreaming = mutation({
       threadId,
       promptMessageId: messageId,
     });
-    // Now, check if we should generate a title.
-    const thread = await ctx.runQuery(components.agent.threads.getThread, { threadId });
-    if (thread && (!thread.title || thread.title == '...')) {
-      await ctx.scheduler.runAfter(0, internal.threads.generateTitle, { threadId });
-    }
   },
 });
 
@@ -86,6 +115,7 @@ export const listThreadMessages = query({
     streamArgs: vStreamArgs,
   },
   handler: async (ctx, args) => {
+    await authorizeThreadAccess(ctx, args.threadId);
     const { threadId, streamArgs } = args;
     const streams = await syncStreams(ctx, components.agent, {
       threadId,
@@ -101,53 +131,27 @@ export const listThreadMessages = query({
   },
 });
 
-export const createSystemThread = mutation({
-  args: {},
-  returns: v.string(),
-  handler: async (ctx) => {
-    return await createThread(ctx, components.agent);
-  },
-});
-
-export const nameThread = mutation({
-  args: { threadId: v.string(), title: v.string() },
-  handler: async (ctx, args) => {
-    const { threadId, title } = args;
-    await ctx.runMutation(components.agent.threads.updateThread, {
-      patch: { title: title },
-      threadId: threadId,
-    });
-  },
-});
-
-export const generateTitle = internalAction({
-  args: { threadId: v.string() },
-  handler: async (ctx, { threadId }) => {
-    const { page: messages } = await ctx.runQuery(api.threads.listThreadMessages, {
-      threadId,
-      paginationOpts: { numItems: 100, cursor: null },
-    });
-    if (messages.length === 0) {
-      return;
+export const updateThreadTitle = action({
+  args: { threadId: v.string(), checkTitle: v.boolean() },
+  handler: async (ctx, { threadId, checkTitle }) => {
+    const { thread } = await agent.continueThread(ctx, { threadId });
+    const { title: currentTitle } = await thread.getMetadata();
+    if (!(checkTitle && currentTitle)) {
+      const {
+        object: { title },
+      } = await thread.generateObject(
+        {
+          mode: 'json',
+          schemaDescription:
+            'Generate a title for the thread. The title should capture the main topic of the thread and be a max of 7 words.',
+          schema: z.object({
+            title: z.string().describe('The new title for the thread'),
+          }),
+          prompt: 'Generate a title for this thread.',
+        },
+        { storageOptions: { saveMessages: 'none' } },
+      );
+      await thread.updateMetadata({ title });
     }
-    const firstMessage = messages[0];
-
-    const prompt =
-      "You are having a conversation with me in a separate thread about a robotics project, I need you to create a title for it (return only the single title in your response and keep it short). Make the title the project's name, if there is none, either create one or let the title be 'New Project'. Here is the first message of the thread:\n" +
-      firstMessage.text;
-
-    const namingThreadId = await ctx.runMutation(api.threads.createSystemThread, {});
-    const { text: title } = await agent.generateText(ctx, { threadId: namingThreadId }, { prompt });
-    await ctx.runMutation(internal.threads.saveTitle, { threadId, title });
-  },
-});
-
-export const saveTitle = internalMutation({
-  args: { threadId: v.string(), title: v.string() },
-  handler: async (ctx, { threadId, title }) => {
-    await ctx.runMutation(components.agent.threads.updateThread, {
-      threadId,
-      patch: { title },
-    });
   },
 });

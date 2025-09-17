@@ -1,4 +1,4 @@
-import { Chat } from '@/app/product/Chat/Chat';
+import { Chat } from '@/app/product/Chat';
 
 export default function HomePage() {
   return (
