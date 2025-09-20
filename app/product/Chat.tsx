@@ -41,7 +41,7 @@ function AuthenticatedChat() {
   const [newMessageText, setNewMessageText] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
   const { threadId, setThreadId } = useThread();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
   const latestThread = useQuery(api.threads.getLatestThread);
   const createThread = useMutation(api.threads.createNewThread);
@@ -56,11 +56,11 @@ function AuthenticatedChat() {
     }
   }, [latestThread, setThreadId]);
 
-  const handleSubmit = async () => {
+  async function handleSubmit() {
     if (!newMessageText.trim() || isSending) return;
 
     setIsSending(true);
-    let id = threadId;
+    let id: string | null = threadId;
     if (!id) {
       id = await createThread();
       setThreadId(id);
@@ -70,14 +70,14 @@ function AuthenticatedChat() {
     setNewMessageText('');
     await updateThreadTitle({ threadId: id, checkTitle: true });
     setIsSending(false);
-  };
+  }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSubmit();
     }
-  };
+  }
 
   return (
     <>

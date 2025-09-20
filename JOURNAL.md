@@ -1,3 +1,10 @@
+## 19th to 20th September 2025
+
+I added rate limiting for both the amount of messages sent and tokens used to the app.<br>
+Right now the app simply blocks you from sending any messages without giving an explanation in the UI, this will be improved in the future.
+
+![assets/journal/20-09-2025_1.gif](assets/journal/20-09-2025_1.gif)
+
 ## 17th September 2025
 
 I cleaned up the code a bit, aligned it with convex's best practices, made it more type-safe, etc.

@@ -1,3 +1,4 @@
+import { UserIdentity } from 'convex/server';
 import { Infer, v } from 'convex/values';
 
 import { Doc } from './_generated/dataModel';
@@ -43,7 +44,7 @@ export const store = mutation({
   args: {},
   returns: v.id('users'),
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
+    const identity: UserIdentity | null = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error('Called storeUser without authentication present.');
     }

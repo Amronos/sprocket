@@ -21,7 +21,7 @@ import {
 import { GetUserReturn } from '@/convex/users';
 
 export function UserMenu() {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   // Prevent hydration mismatch
   useEffect(() => {

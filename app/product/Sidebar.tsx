@@ -13,11 +13,11 @@ export function Sidebar({ isOpen }: { isOpen: boolean }) {
   const threads = useQuery(api.threads.listThreads);
   const createThread = useMutation(api.threads.createNewThread);
 
-  const handleCreateThread = async () => {
+  async function handleCreateThread() {
     console.log('Creating New User Thread');
-    const newThreadId = await createThread();
+    const newThreadId: string = await createThread();
     setThreadId(newThreadId);
-  };
+  }
 
   return (
     <div
