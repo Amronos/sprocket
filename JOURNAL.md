@@ -3,7 +3,9 @@
 I added rate limiting for both the amount of messages sent and tokens used to the app.<br>
 Right now the app simply blocks you from sending any messages without giving an explanation in the UI, this will be improved in the future.
 
-![assets/journal/20-09-2025_1.gif](assets/journal/20-09-2025_1.gif)
+I also added more features to the sidebar. The full title of the thread can now be seen when hovering over the button and it can also be right-clicked to get options for renaming or regenerating the title and deleting the thread.
+
+| ![assets/journal/20-09-2025_1.gif](assets/journal/20-09-2025_1.gif) | ![assets/journal/20-09-2025_2.png](assets/journal/20-09-2025_2.png) |
 
 ## 17th September 2025
 

@@ -148,9 +148,29 @@ export const listThreadMessages = query({
   },
 });
 
-export const updateThreadTitle = action({
+export const renameThread = mutation({
+  args: { threadId: v.string(), title: v.string() },
+  handler: async (ctx, { threadId, title }) => {
+    await authorizeThreadAccess(ctx, threadId);
+    await ctx.runMutation(components.agent.threads.updateThread, {
+      threadId,
+      patch: { title },
+    });
+  },
+});
+
+export const deleteThread = mutation({
+  args: { threadId: v.string() },
+  handler: async (ctx, { threadId }) => {
+    await authorizeThreadAccess(ctx, threadId);
+    await agent.deleteThreadAsync(ctx, { threadId });
+  },
+});
+
+export const generateThreadTitle = action({
   args: { threadId: v.string(), checkTitle: v.boolean() },
   handler: async (ctx, { threadId, checkTitle }): Promise<void> => {
+    await authorizeThreadAccess(ctx, threadId);
     const { thread } = await agent.continueThread(ctx, { threadId });
     const { title: currentTitle } = await thread.getMetadata();
     if (!(checkTitle && currentTitle)) {

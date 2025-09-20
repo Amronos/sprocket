@@ -2,14 +2,7 @@
 
 import { optimisticallySendMessage, useUIMessages } from '@convex-dev/agent/react';
 import { ArrowUpIcon, ChatBubbleIcon } from '@radix-ui/react-icons';
-import {
-  Authenticated,
-  AuthLoading,
-  Unauthenticated,
-  useAction,
-  useMutation,
-  useQuery,
-} from 'convex/react';
+import { Authenticated, AuthLoading, Unauthenticated, useAction, useMutation } from 'convex/react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
@@ -43,18 +36,11 @@ function AuthenticatedChat() {
   const { threadId, setThreadId } = useThread();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
-  const latestThread = useQuery(api.threads.getLatestThread);
   const createThread = useMutation(api.threads.createNewThread);
   const sendMessage = useMutation(api.threads.initiateAsyncStreaming).withOptimisticUpdate(
     optimisticallySendMessage(api.threads.listThreadMessages),
   );
-  const updateThreadTitle = useAction(api.threads.updateThreadTitle);
-
-  useEffect(() => {
-    if (latestThread) {
-      setThreadId(latestThread._id);
-    }
-  }, [latestThread, setThreadId]);
+  const generateThreadTitle = useAction(api.threads.generateThreadTitle);
 
   async function handleSubmit() {
     if (!newMessageText.trim() || isSending) return;
@@ -68,7 +54,7 @@ function AuthenticatedChat() {
 
     await sendMessage({ threadId: id, prompt: newMessageText });
     setNewMessageText('');
-    await updateThreadTitle({ threadId: id, checkTitle: true });
+    await generateThreadTitle({ threadId: id, checkTitle: true });
     setIsSending(false);
   }
 
