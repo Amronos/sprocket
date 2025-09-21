@@ -146,9 +146,8 @@ function Messages({ threadId }: { threadId: string }) {
               <Message
                 author={message.role == 'assistant' ? 'Sprocket' : 'You'}
                 isUserMessage={message.role == 'user'}
-              >
-                {message.text}
-              </Message>
+                message={message.text}
+              />
             </div>
           ))}
           <div ref={messagesEndRef} />
