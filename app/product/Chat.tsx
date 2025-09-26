@@ -5,6 +5,7 @@ import { ArrowUpIcon, ChatBubbleIcon } from '@radix-ui/react-icons';
 import { Authenticated, AuthLoading, Unauthenticated, useAction, useMutation } from 'convex/react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 
 import { Sidebar } from '@/app/product/Sidebar';
 import { Message } from '@/components/Message';
@@ -14,11 +15,34 @@ import { api } from '@/convex/_generated/api';
 import { useThread } from '@/lib/useThread';
 import { cn } from '@/lib/utils';
 
+function FallbackRender({ error, resetErrorBoundary }: FallbackProps) {
+  setTimeout(() => {
+    resetErrorBoundary();
+  }, 1000);
+
+  return (
+    <div role="alert">
+      <p>Something went wrong. Retrying…</p>
+      <pre style={{ color: 'red' }}>{error.message}</pre>
+    </div>
+  );
+}
+
 export function Chat() {
+  const [appKey, setAppKey] = useState<number>(0);
+
   return (
     <div className="flex h-full">
       <Authenticated>
-        <AuthenticatedChat />
+        <ErrorBoundary
+          fallbackRender={FallbackRender}
+          onReset={() => {
+            // Change the key to force React to remount the app
+            setAppKey((prev) => prev + 1);
+          }}
+        >
+          <AuthenticatedChat key={appKey} />
+        </ErrorBoundary>
       </Authenticated>
       <Unauthenticated>
         <UnauthenticatedChat />
