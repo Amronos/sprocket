@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "engines": {
+    "node": "22",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "build:browser": "pnpm --filter browser-app run bundle",
+    "build:electron": "pnpm --filter electron-app run bundle",
+    "prepare_in_testing": "lerna run prepare",
+    "postinstall": "theia check:theia-version",
+    "start:browser": "pnpm --filter browser-app start",
+    "start:electron": "pnpm --filter electron-app start",
+    "watch:browser": "lerna run --parallel watch --ignore electron-app",
+    "watch:electron": "lerna run --parallel watch --ignore browser-app"
+  },
+  "devDependencies": {
+    "@theia/cli": "1.67.0"
+  }
+}

@@ -1,0 +1,18 @@
+packages:
+  - browser-app
+  - electron-app
+  - hello-world
+
+nodeLinker: hoisted
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@theia/ffmpeg'
+  - '@vscode/ripgrep'
+  - drivelist
+  - electron
+  - keytar
+  - msgpackr-extract
+  - native-keymap
+  - node-pty
+  - puppeteer
