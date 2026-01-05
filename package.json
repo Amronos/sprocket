@@ -16,5 +16,10 @@
   },
   "devDependencies": {
     "@theia/cli": "1.67.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@theia/*": "1.67.0"
+    }
   }
 }

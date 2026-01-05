@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@theia/*': 1.67.0
+
 importers:
 
   .:
@@ -15,96 +18,99 @@ importers:
   browser-app:
     dependencies:
       '@theia/core':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
       '@theia/editor':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
       '@theia/filesystem':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/markers':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/messages':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@theia/monaco':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/navigator':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/preferences':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/process':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
       '@theia/terminal':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/workspace':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       hello-world:
         specifier: workspace:*
         version: link:../hello-world
     devDependencies:
       '@theia/cli':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
 
   electron-app:
     dependencies:
       '@theia/core':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
       '@theia/editor':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
       '@theia/electron':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(electron@38.4.0)
       '@theia/filesystem':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/markers':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/messages':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@theia/monaco':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/navigator':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/preferences':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/process':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
       '@theia/terminal':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       '@theia/workspace':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
       hello-world:
         specifier: workspace:*
         version: link:../hello-world
     devDependencies:
       '@theia/cli':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))(typescript@5.4.5)
+      electron:
+        specifier: 38.4.0
+        version: 38.4.0
 
   hello-world:
     dependencies:
       '@theia/core':
-        specifier: 1.67.0
+        specifier: ^1.0.0
         version: 1.67.0(@theia/electron@1.67.0(electron@38.4.0))
     devDependencies:
       rimraf:
